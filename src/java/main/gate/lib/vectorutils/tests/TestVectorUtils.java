@@ -40,6 +40,8 @@ public class TestVectorUtils {
     
   }
   
+  double LEPS = 0.0000000001;
+  
   VectorUtils vu;
   
   @Before
@@ -56,6 +58,12 @@ public class TestVectorUtils {
     assertEquals(3.0,c[0],vu.EPS);
     assertEquals(3.1,c[1],vu.EPS);
     assertEquals(6.0,c[2],vu.EPS);
+    
+    assertEquals(13.2,vu.dot(a, b),vu.EPS);
+    
+    assertEquals(3.7416573867739413,vu.normL2(a),LEPS);
+    
+    assertEquals(0.06413571368455151,vu.simCosine(a, b),LEPS);
   }
   
 }
