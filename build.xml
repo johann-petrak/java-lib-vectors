@@ -33,6 +33,7 @@
 
   <target name="prepare" >
     <mkdir dir="${classes.dir}" />
+  </target>
     
   <!-- Path to compile - includes gate.jar and GATE/lib/*.jar -->
   <path id="gate.classpath">
@@ -46,7 +47,6 @@
   <!-- GATE classes plus local lib jars -->
   <path id="compile.classpath">
     <path refid="gate.classpath" />
-    <path refid="ivylibs" />
     <fileset dir="lib"> 
       <include name="*.jar"/>
     </fileset>
@@ -115,7 +115,6 @@
   </target>
 
   <target name="clean.all" depends="clean" >
-    <ivy:cleancache/> 
   </target>
 
   <!-- Clean up - remove .class and .jar files -->
