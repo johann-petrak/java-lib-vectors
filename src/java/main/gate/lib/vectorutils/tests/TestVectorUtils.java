@@ -54,7 +54,7 @@ public class TestVectorUtils {
     double[] c = vu.add(a, b);
     assertEquals(c.length, a.length);
     assertEquals(3.0,c[0],vu.EPS);
-    assertEquals(2.1,c[1],vu.EPS);
+    assertEquals(3.1,c[1],vu.EPS);
     assertEquals(6.0,c[2],vu.EPS);
   }
   

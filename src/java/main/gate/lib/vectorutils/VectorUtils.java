@@ -277,7 +277,7 @@ public class VectorUtils {
     } else {
       double[] ret = new double[vec1.length];
       for (int i = 0; i < vec1.length; i++) {
-        ret[i] = vec1[i] + vec2[2];
+        ret[i] = vec1[i] + vec2[i];
       }
       return ret;
     }
