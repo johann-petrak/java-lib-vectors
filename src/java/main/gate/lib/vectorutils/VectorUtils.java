@@ -96,6 +96,23 @@ public class VectorUtils {
     return ret;
   }
   
+  /** 
+   * Subtract the mean of all dimensions from each dimension.
+   * 
+   * @param Vector
+   * @return 
+   */
+  public double[] shiftMean(double[] vector) {
+    double m = mean(vector);
+    double[] ret = new double[vector.length];
+    for(int i=0; i<vector.length; i++) {
+      ret[i] = vector[i] - m;
+    }
+    return ret;
+  }
+  
+  
+  
   /////// functions on two or more vectors, returning a scalar
   
   /**
@@ -113,7 +130,8 @@ public class VectorUtils {
   }
 
   /**
-   * Calculate the L1 norm of the vector
+   * Calculate the L1 norm of the vector.
+   * 
    * @param vector
    * @return 
    */
@@ -124,6 +142,23 @@ public class VectorUtils {
     }
     return norm;
   }
+
+  /**
+   * Calculate the Linf norm of the vector.
+   * 
+   * @param vector
+   * @return 
+   */
+  public double normLinf(double[] vector) {
+    double norm = 0.0;    
+    for(double val : vector) {
+      if(Math.abs(val) > norm) {
+        norm = Math.abs(val);
+      }
+    }
+    return norm;
+  }
+
   
   /**
    * Calculate the dot-product (inner product) of two vectors.
@@ -146,18 +181,141 @@ public class VectorUtils {
   /**
    * Calculate the cosine similarity of two vectors.
    * 
+   * The cosine similarity of vectors v1 and v2 is (v1 . v2) / (||v1|| ||v2||)
+   * where (v1 . v2) is the dot product of the vectors and ||v|| is the L2 
+   * norm or the vector.
+   * 
    * @param vector1
    * @param vector2
    * @return cosine-similarity of the two vectors
    */
   public double simCosine(double[] vector1, double[] vector2) {
     if(vector1.length != vector2.length) {
-      throw new RuntimeException("Vectos must have equal length for simCosine");
+      throw new RuntimeException("Vectors must have equal length for simCosine");
     }
     double div = normL2(vector1) * normL2(vector2);
     // TODO: what if div is zero
     return dot(vector1,vector2) / div;
   }
+  
+  
+  /**
+   * Calculate the Canberra distance of two vectors.
+   * 
+   * The distance is the sum of |v1_i - v2_i| / (|v1_i| + |v2_i|) over
+   * all dimensions i of the vectors, where v1_i is the value of the i-th
+   * dimension of the first vector etc. For this, 0 / 0 is defined to be 0,
+   * though there may still be overflow or underflow errors for 
+   * other extreme values.
+   * 
+   * @param vector1
+   * @param vector2
+   * @return 
+   */
+  public double distCanberra(double[] vector1, double[] vector2) {
+    if(vector1.length != vector2.length) {
+      throw new RuntimeException("Vectors must have equal length for distCanberra");
+    }
+    double ret = 0.0;
+    for(int i = 0; i<vector1.length; i++) {
+      double v1 = vector1[i];
+      double v2 = vector2[i];
+      if(v1 == 0 && v2 == 0) {
+        // do nothing we would simply add 0.0
+      } else {
+        ret += Math.abs(v1-v2) / (Math.abs(v1) + Math.abs(v2));
+      }
+    }
+    return ret;
+  }
+  
+  /**
+   * Returns the Chebyshef distance of two vectors.
+   * 
+   * The Chebyshef distance is simply the biggest difference
+   * between any of the dimensions of the two vectors. 
+   * 
+   * @param vector1
+   * @param vector2
+   * @return 
+   */
+  public double distChebyshef(double[] vector1, double[] vector2) {
+    if(vector1.length != vector2.length) {
+      throw new RuntimeException("Vectors must have equal length for distChebyshef");
+    }
+    double ret = 0.0;
+    for(int i = 0; i<vector1.length; i++) {
+      double tmp = Math.abs(vector1[i] - vector2[i]);
+      if(tmp>ret) {
+        ret = tmp;
+      }
+    }
+    return ret;    
+  }
+  
+  /**
+   * Returns the Manhattan distance of two vectors.
+   * 
+   * The Manhattan distance is simply the sum of all absolute 
+   * differences between each of the dimensions of the vectors.
+   * 
+   * @param vector1
+   * @param vector2
+   * @return 
+   */
+  public double distManhattan(double[] vector1, double[] vector2) {
+    if(vector1.length != vector2.length) {
+      throw new RuntimeException("Vectors must have equal length for distManhattan");
+    }
+    double ret = 0.0;
+    for(int i = 0; i<vector1.length; i++) {
+      ret += Math.abs(vector1[i] - vector2[i]);
+    }
+    return ret;    
+  }
+  
+  /**
+   * Returns the Correlation similarity of two vectors.
+   * 
+   * The Correlation similarity is the same as Cosine similarity, but 
+   * with the vectors first mean-shifted
+   * 
+   * @param vector1
+   * @param vector2
+   * @return 
+   */
+  public double simCorrelation(double[] vector1, double[] vector2) {
+    if(vector1.length != vector2.length) {
+      throw new RuntimeException("Vectors must have equal length for simCorrelation");
+    }
+    double v1[] = shiftMean(vector1);
+    double v2[] = shiftMean(vector2);
+    return simCosine(v1, v2);
+  }
+
+  public double distEuclidean(double[] vector1, double[] vector2) {
+    if(vector1.length != vector2.length) {
+      throw new RuntimeException("Vectors must have equal length for distEuclidean");
+    }
+    double sumsq = 0.0;
+    for(int i = 0; i<vector1.length; i++) {
+      sumsq += (vector2[i]-vector1[i]) * (vector2[i]-vector1[i]);
+    }
+    return Math.sqrt(sumsq);    
+  }
+  
+  
+  /**
+   * Calculates the mean of all the elements of the vector
+   * @param vector
+   * @return 
+   */
+  public double mean(double[] vector) {
+    double sum = 0.0;
+    for(double el : vector) sum += el;
+    return sum / vector.length;
+  }
+
   
   
   /////// functions on two vectors or lists of vectors which create a 

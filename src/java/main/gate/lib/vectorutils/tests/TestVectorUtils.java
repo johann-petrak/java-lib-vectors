@@ -53,17 +53,28 @@ public class TestVectorUtils {
   public void testAdd() {
     double[] a = new double[]{1.0,2.0,3.0};
     double[] b = new double[]{2.0,1.1,3.0};
-    double[] c = vu.add(a, b);
-    assertEquals(c.length, a.length);
-    assertEquals(3.0,c[0],vu.EPS);
-    assertEquals(3.1,c[1],vu.EPS);
-    assertEquals(6.0,c[2],vu.EPS);
+    double[] t_add = vu.add(a, b);
+    assertEquals(t_add.length, a.length);
+    assertEquals(3.0,t_add[0],vu.EPS);
+    assertEquals(3.1,t_add[1],vu.EPS);
+    assertEquals(6.0,t_add[2],vu.EPS);
     
     assertEquals(13.2,vu.dot(a, b),vu.EPS);
     
     assertEquals(3.7416573867739413,vu.normL2(a),LEPS);
     
-    assertEquals(0.06413571368455151,vu.simCosine(a, b),LEPS);
+    // we got the number from scipy.spatial.distance.cosine which is a distance,
+    // so have to convert it back into a similarity
+    assertEquals((1.0-0.06413571368455151),vu.simCosine(a, b),LEPS);
+    
+    double[] c = new double[]{2.2,0.3,1.1};
+    
+    assertEquals((1.0-0.3420670580023687),vu.simCosine(a, c), LEPS);
+    
+    assertEquals((1.0-1.5765566601970549),vu.simCorrelation(a, c), LEPS);
+    
+    assertEquals(2.817800560721074,vu.distEuclidean(a, c),LEPS);
+    
   }
   
 }
