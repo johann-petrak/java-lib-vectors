@@ -230,16 +230,16 @@ public class VectorUtils {
   }
   
   /**
-   * Returns the Chebyshef distance of two vectors.
+   * Returns the Chebyshev distance of two vectors.
    * 
-   * The Chebyshef distance is simply the biggest difference
+   * The Chebyshev distance is simply the biggest difference
    * between any of the dimensions of the two vectors. 
    * 
    * @param vector1
    * @param vector2
    * @return 
    */
-  public double distChebyshef(double[] vector1, double[] vector2) {
+  public double distChebyshev(double[] vector1, double[] vector2) {
     if(vector1.length != vector2.length) {
       throw new RuntimeException("Vectors must have equal length for distChebyshef");
     }
@@ -373,7 +373,7 @@ public class VectorUtils {
    * Each dimension in the result vector is the average of the same dimension
    * from all vectors in the list, weighted by the weight for the corresponding vector.
    * 
-   * If the weights are null, no weighting is done and an unweighted average is calculated.
+   * If the weights are null or empty, no weighting is done and an unweighted average is calculated.
    * 
    * @param vectors
    * @return sum vector
@@ -381,7 +381,7 @@ public class VectorUtils {
   public double[] average(List<double[]> vectors, List<Double> weights) {
     double[] ret = sum(vectors,weights);
     double sum = 0;
-    if(weights == null) {
+    if(weights == null || weights.isEmpty()) {
       sum = vectors.size();
     } else {
       for(Double weight : weights) {
@@ -397,6 +397,10 @@ public class VectorUtils {
     return ret;
   }
 
+  public double[] average(List<double[]> vectors) {
+    return average(vectors,null);
+  }
+  
   /**
    * Calculate a vector where each dimension is the maximum of that dimension
    * among all the given vectors. 
@@ -411,7 +415,7 @@ public class VectorUtils {
     double[] ret = new double[len];
     for (double[] vec : vectors) {
       if(vec.length != len) {
-        throw new RuntimeException("Vectors for sum of different lengths: "+len+"/"+vec.length);
+        throw new RuntimeException("Vectors for maxpooling of different lengths: "+len+"/"+vec.length);
       }
       // For max pooling, replace each dimension by the current vectors value
       // if that is larger. 
@@ -422,6 +426,33 @@ public class VectorUtils {
     }
     return ret;
   }
+
+  /**
+   * Calculate a vector where each dimension is the minimum of that dimension
+   * among all the given vectors. 
+   * @param vectors
+   * @return minpooling vector
+   */
+  public double[] minpooling(List<double[]> vectors) {
+    if(vectors.isEmpty()) {
+      throw new RuntimeException("Cannot create minimum pooling of no vectors");
+    }
+    int len = vectors.get(0).length;
+    double[] ret = new double[len];
+    for (double[] vec : vectors) {
+      if(vec.length != len) {
+        throw new RuntimeException("Vectors for minpooling of different lengths: "+len+"/"+vec.length);
+      }
+      // For min pooling, replace each dimension by the current vectors value
+      // if that is larger. 
+      for(int j=0;j<len;j++) {
+        if(vec[j] < ret[j])
+          ret[j] = vec[j];
+      }
+    }
+    return ret;
+  }
+
   
   /**
    * Return a vector that is the sum of the two given vectors

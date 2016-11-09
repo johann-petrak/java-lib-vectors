@@ -19,6 +19,8 @@
 package gate.lib.vectorutils.tests;
 
 import gate.lib.vectorutils.VectorUtils;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import static org.junit.Assert.assertEquals;
@@ -40,7 +42,7 @@ public class TestVectorUtils {
     
   }
   
-  double LEPS = 0.0000000001;
+  double LEPS = 0.000001;
   
   VectorUtils vu;
   
@@ -50,7 +52,7 @@ public class TestVectorUtils {
   }
   
   @Test
-  public void testAdd() {
+  public void test1() {
     double[] a = new double[]{1.0,2.0,3.0};
     double[] b = new double[]{2.0,1.1,3.0};
     double[] t_add = vu.add(a, b);
@@ -74,6 +76,16 @@ public class TestVectorUtils {
     assertEquals((1.0-1.5765566601970549),vu.simCorrelation(a, c), LEPS);
     
     assertEquals(2.817800560721074,vu.distEuclidean(a, c),LEPS);
+    
+    List<double[]> vectors = new ArrayList<double[]>();
+    vectors.add(a);
+    vectors.add(b);
+    vectors.add(c);
+    
+    double avg[] = vu.average(vectors);
+    assertEquals(1.73333333,avg[0],LEPS);
+    assertEquals(1.13333333,avg[1],LEPS);
+    assertEquals(2.36666667,avg[2],LEPS);
     
   }
   
