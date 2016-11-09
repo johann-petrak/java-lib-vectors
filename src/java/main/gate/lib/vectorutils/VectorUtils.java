@@ -407,15 +407,20 @@ public class VectorUtils {
    * @param vectors
    * @return maxpooling vector
    */
-  public double[] maxpooling(List<double[]> vectors) {
+  public double[] maxpooling(List<double[]> vectors, List<Double> weights) {
     if(vectors.isEmpty()) {
       throw new RuntimeException("Cannot create maximum pooling of no vectors");
     }
     int len = vectors.get(0).length;
     double[] ret = new double[len];
-    for (double[] vec : vectors) {
-      if(vec.length != len) {
-        throw new RuntimeException("Vectors for maxpooling of different lengths: "+len+"/"+vec.length);
+    int i = 0;
+    for (double[] vector : vectors) {
+      if(vector.length != len) {
+        throw new RuntimeException("Vectors for maxpooling of different lengths: "+len+"/"+vector.length);
+      }
+      double vec[] = vector;
+      if(weights != null && !weights.isEmpty()) {
+        vec = mul(vector,weights.get(i));
       }
       // For max pooling, replace each dimension by the current vectors value
       // if that is larger. 
@@ -423,25 +428,38 @@ public class VectorUtils {
         if(vec[j] > ret[j])
           ret[j] = vec[j];
       }
+      i++;
     }
     return ret;
+  }
+  
+  public double[] maxpooling(List<double[]> vectors) {
+    return maxpooling(vectors, null);
   }
 
   /**
    * Calculate a vector where each dimension is the minimum of that dimension
    * among all the given vectors. 
+   * 
+   * If a list of weights is not null and not empty, each corresponding 
+   * vector is first multiplied by the weight.
    * @param vectors
    * @return minpooling vector
    */
-  public double[] minpooling(List<double[]> vectors) {
+  public double[] minpooling(List<double[]> vectors, List<Double> weights) {
     if(vectors.isEmpty()) {
       throw new RuntimeException("Cannot create minimum pooling of no vectors");
     }
     int len = vectors.get(0).length;
     double[] ret = new double[len];
-    for (double[] vec : vectors) {
-      if(vec.length != len) {
-        throw new RuntimeException("Vectors for minpooling of different lengths: "+len+"/"+vec.length);
+    int i = 0;
+    for (double[] vector : vectors) {
+      if(vector.length != len) {
+        throw new RuntimeException("Vectors for minpooling of different lengths: "+len+"/"+vector.length);
+      }
+      double vec[] = vector;
+      if(weights != null && !weights.isEmpty()) {
+        vec = mul(vector,weights.get(i));
       }
       // For min pooling, replace each dimension by the current vectors value
       // if that is larger. 
@@ -449,8 +467,13 @@ public class VectorUtils {
         if(vec[j] < ret[j])
           ret[j] = vec[j];
       }
+      i++;
     }
     return ret;
+  }
+
+  public double[] minpooling(List<double[]> vectors) {
+    return minpooling(vectors, null);
   }
 
   
@@ -485,6 +508,22 @@ public class VectorUtils {
     double[] ret = new double[vector1.length];
     for(int i=0; i<vector1.length; i++) {
       ret[i] = vector1[i] * vector2[i];
+    }
+    return ret;
+  }
+  
+  /**
+   * Return a new vector that is the element-vise product of the original
+   * vector and the scalar.
+   * 
+   * @param vector
+   * @param scalar
+   * @return 
+   */
+  public double[] mul(double[] vector, double scalar) {
+    double[] ret = new double[vector.length];
+    for(int i=0; i<vector.length; i++) {
+      ret[i] = vector[i] * scalar;
     }
     return ret;
   }
