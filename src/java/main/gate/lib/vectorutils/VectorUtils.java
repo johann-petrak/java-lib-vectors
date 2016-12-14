@@ -25,6 +25,11 @@ import java.util.List;
 /**
  * Simple collection of vector utilities. 
  * 
+ * This class needs provides instance methods, not static methods. This is so that at 
+ * instantiation, the class can be configured to have different EPS, different behaviour
+ * when errors occur, etc. Currently there is not much that can be configured, but 
+ * this is designed so that in the future there can be added more.
+ * 
  * @author Johann Petrak
  */
 public class VectorUtils {
@@ -39,14 +44,23 @@ public class VectorUtils {
    * Default constructor, creates the instance with the default option
    * settings.
    * 
+   * EPS is 10.0*Double.MIN_VALUE
+   * 
+   * Errors will result in a runtime exception being thrown.
+   * 
    */
   public VectorUtils() {
   }
   
   /**
    * Create the instance and set the options.
-   * @param eps
-   * @param throwOnError 
+   * 
+   * @param eps the EPS value used when comparisons are made: if the difference between
+   * two double values is less than this value, then they are considered to be equal.
+   * 
+   * @param throwOnError If yes, then a runtime exception is thrown on most error conditions,
+   * otherwise the error is logged and some default result is produced (see documentation of 
+   * the methods). 
    */
   public VectorUtils(double eps, boolean throwOnError) {
     EPS = eps;
@@ -59,6 +73,10 @@ public class VectorUtils {
   
   /**
    * Normalize the vector by its L2 norm.
+   * 
+   * If the norm is too close to zero then either an exception is thrown or the method silently returns
+   * a copy of the original vector.
+   * 
    * @param vector
    * @return a copy of the vector, normalized by the L2 norm of the original.
    */
@@ -81,6 +99,11 @@ public class VectorUtils {
 
   /**
    * Normalize the vector by its L1 norm.
+   * 
+   * If the norm is too close to zero then either an exception is thrown or the method silently returns
+   * a copy of the original vector.
+   * 
+   * 
    * @param vector
    * @return a copy of the vector, normalized by the L1 norm of the original.
    */
@@ -113,7 +136,7 @@ public class VectorUtils {
   
   
   
-  /////// functions on two or more vectors, returning a scalar
+  /////// functions on one vector, returning a scalar
   
   /**
    * Calculate the L2 norm of the vector
@@ -159,9 +182,13 @@ public class VectorUtils {
     return norm;
   }
 
+  /////// functions on two or more vectors, returning a scalar
+
   
   /**
    * Calculate the dot-product (inner product) of two vectors.
+   * 
+   * If the two vectors have different dimension, then an exception is always thrown.
    * 
    * @param vector1
    * @param vector2
@@ -185,6 +212,8 @@ public class VectorUtils {
    * where (v1 . v2) is the dot product of the vectors and ||v|| is the L2 
    * norm or the vector.
    * 
+   * If the two vectors have different dimension, then an exception is always thrown.
+   * 
    * @param vector1
    * @param vector2
    * @return cosine-similarity of the two vectors
@@ -207,6 +236,9 @@ public class VectorUtils {
    * dimension of the first vector etc. For this, 0 / 0 is defined to be 0,
    * though there may still be overflow or underflow errors for 
    * other extreme values.
+   * 
+   * If the two vectors have different dimension, then an exception is always thrown.
+   * 
    * 
    * @param vector1
    * @param vector2
@@ -235,6 +267,9 @@ public class VectorUtils {
    * The Chebyshev distance is simply the biggest difference
    * between any of the dimensions of the two vectors. 
    * 
+   * If the two vectors have different dimension, then an exception is always thrown.
+   * 
+   * 
    * @param vector1
    * @param vector2
    * @return 
@@ -259,6 +294,8 @@ public class VectorUtils {
    * The Manhattan distance is simply the sum of all absolute 
    * differences between each of the dimensions of the vectors.
    * 
+   * If the two vectors have different dimension, then an exception is always thrown.
+   * 
    * @param vector1
    * @param vector2
    * @return 
@@ -279,6 +316,8 @@ public class VectorUtils {
    * 
    * The Correlation similarity is the same as Cosine similarity, but 
    * with the vectors first mean-shifted
+   * 
+   * If the two vectors have different dimension, then an exception is always thrown.
    * 
    * @param vector1
    * @param vector2
@@ -341,6 +380,11 @@ public class VectorUtils {
    * 
    * If the weights are null, no weighting is done and a normal sum is calculated.
    * 
+   * If the the weights are not null or empty, then they must have the same number of 
+   * elements as there are vectors, otherweise an exception is always thrown.
+   * 
+   * An exception is thrown if there are no vectors. 
+   * 
    * @param vectors
    * @return sum vector
    */
@@ -375,6 +419,11 @@ public class VectorUtils {
    * 
    * If the weights are null or empty, no weighting is done and an unweighted average is calculated.
    * 
+   * If the the weights are not null or empty, then they must have the same number of 
+   * elements as there are vectors, otherweise an exception is always thrown.
+   * 
+   * An exception is thrown if there are no vectors. 
+   * 
    * @param vectors
    * @return sum vector
    */
@@ -397,6 +446,14 @@ public class VectorUtils {
     return ret;
   }
 
+  /**
+   * Return a vector that is the weighted average of all the vectors passed in the list.
+   * Each dimension in the result vector is the average of the same dimension
+   * from all vectors in the list.
+   * 
+   * @param vectors
+   * @return sum vector
+   */
   public double[] average(List<double[]> vectors) {
     return average(vectors,null);
   }
@@ -404,6 +461,15 @@ public class VectorUtils {
   /**
    * Calculate a vector where each dimension is the maximum of that dimension
    * among all the given vectors. 
+   * 
+   * If the list of weights is not null or not empty, then each vector is weighted
+   * by the corresponding weight before the maximum is taken.
+   * 
+   * If the the weights are not null or empty, then they must have the same number of 
+   * elements as there are vectors, otherweise an exception is always thrown.
+   * 
+   * An exception is thrown if there are no vectors. 
+   * 
    * @param vectors
    * @return maxpooling vector
    */
@@ -433,6 +499,13 @@ public class VectorUtils {
     return ret;
   }
   
+  /**
+   * Calculate a vector where each dimension is the maximum of that dimension
+   * among all the given vectors. 
+   * 
+   * @param vectors
+   * @return maxpooling vector
+   */
   public double[] maxpooling(List<double[]> vectors) {
     return maxpooling(vectors, null);
   }
@@ -443,6 +516,12 @@ public class VectorUtils {
    * 
    * If a list of weights is not null and not empty, each corresponding 
    * vector is first multiplied by the weight.
+   * 
+   * If the the weights are not null or empty, then they must have the same number of 
+   * elements as there are vectors, otherweise an exception is always thrown.
+   * 
+   * An exception is thrown if there are no vectors. 
+   * 
    * @param vectors
    * @return minpooling vector
    */
@@ -472,6 +551,18 @@ public class VectorUtils {
     return ret;
   }
 
+  /**
+   * Calculate a vector where each dimension is the minimum of that dimension
+   * among all the given vectors. 
+   * 
+   * If the the weights are not null or empty, then they must have the same number of 
+   * elements as there are vectors, otherweise an exception is always thrown.
+   * 
+   * An exception is thrown if there are no vectors. 
+   * 
+   * @param vectors
+   * @return minpooling vector
+   */
   public double[] minpooling(List<double[]> vectors) {
     return minpooling(vectors, null);
   }
@@ -479,6 +570,9 @@ public class VectorUtils {
   
   /**
    * Return a vector that is the sum of the two given vectors
+   * 
+   * An exception is always thrown if the vectors do not have the same numner of dimensions.
+   * 
    * @param vec1
    * @param vec2
    * @return 
@@ -497,6 +591,9 @@ public class VectorUtils {
   
   /**
    * Return a vector that is the element-wise product of the two vectors.
+   * 
+   * An exception is always thrown if the vectors do not have the same numner of dimensions.
+   * 
    * @param vector1
    * @param vector2
    * @return 
@@ -528,6 +625,12 @@ public class VectorUtils {
     return ret;
   }
   
+  /**
+   * Helper method that chekcs if some double value is within the configured EPS around zero.
+   *
+   * @param value
+   * @return 
+   */
   public boolean isZero(double value) {
     return (Math.abs(value) < EPS);
   }
