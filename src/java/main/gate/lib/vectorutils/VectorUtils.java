@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015-2016 The University Of Sheffield.
  *
- * This file is part of yodie-plugin-disambiguation. 
+ * This file is part of java-lib-vectors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
