@@ -10,7 +10,7 @@
             <test-roots/>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
-            <definitions>/home/johann/work-git/embeddings-jp-mr/java/sharedlibs/nblibraries.properties</definitions>
+            <definitions>../sharedlibs/nblibraries.properties</definitions>
         </libraries>
     </configuration>
 </project>
