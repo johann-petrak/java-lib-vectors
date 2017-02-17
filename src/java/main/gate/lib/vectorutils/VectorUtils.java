@@ -212,6 +212,13 @@ public class VectorUtils {
    * where (v1 . v2) is the dot product of the vectors and ||v|| is the L2 
    * norm or the vector.
    * 
+   * The result is a similarity score which ranges from -1 to 1, with -1 indicating
+   * that the vectors point in opposite directions, 1 meaning same direction, 
+   * and 0 meaning the vectors are orthogonal. 
+   * Sometimes 1-simCosine(v1,v2) is used as a distance score.
+   * This similarity is not a proper metric! 
+   * A related distance metric is distAngular(v1,v2).
+   * 
    * If the two vectors have different dimension, then an exception is always thrown.
    * 
    * @param vector1
@@ -332,7 +339,16 @@ public class VectorUtils {
     return simCosine(v1, v2);
   }
 
-  public double distEuclidean(double[] vector1, double[] vector2) {
+  
+  /**
+   * Euclidean distance between two vectors
+   * 
+   * 
+   * @param vector1
+   * @param vector2
+   * @return Euclidean distance between the vectors
+   */
+    public double distEuclidean(double[] vector1, double[] vector2) {
     if(vector1.length != vector2.length) {
       throw new RuntimeException("Vectors must have equal length for distEuclidean");
     }
@@ -343,10 +359,26 @@ public class VectorUtils {
     return Math.sqrt(sumsq);    
   }
   
-  
+  /**
+   * Calculate the angular distance of two vectors.
+   * 
+   * The angular similarity of vectors v1 and v2 is acos((v1 . v2) / (||v1|| ||v2||))/\pi
+   * where (v1 . v2) is the dot product of the vectors and ||v|| is the L2 
+   * norm or the vector.
+   * 
+   * The result is the distance between the vectors, normalized to length 1,
+   * along the arc of a unit circle connecting their endpoints. This distance
+   * is a metric. 
+   * 
+   * If the two vectors have different dimension, then an exception is always thrown.
+   * 
+   * @param vector1
+   * @param vector2
+   * @return Angular distance between the vectors
+   */
   public double distAngular(double[] vector1, double[] vector2) {
     double cosineSim = simCosine(vector1, vector2);
-    return Math.acos(cosineSim);
+    return Math.acos(cosineSim)/Math.PI;
   }
   
   /**
