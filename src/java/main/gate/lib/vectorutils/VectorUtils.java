@@ -344,6 +344,11 @@ public class VectorUtils {
   }
   
   
+  public double distAngular(double[] vector1, double[] vector2) {
+    double cosineSim = simCosine(vector1, vector2);
+    return Math.acos(cosineSim);
+  }
+  
   /**
    * Calculates the mean of all the elements of the vector
    * @param vector
