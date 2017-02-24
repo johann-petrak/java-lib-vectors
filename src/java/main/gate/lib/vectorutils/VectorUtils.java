@@ -627,6 +627,29 @@ public class VectorUtils {
   }
   
   /**
+   * Return a vector that is the difference between first and second vector
+   * 
+   * Subtract second vector from first vector.
+   * An exception is always thrown if the vectors do not have the same numner of dimensions.
+   * 
+   * @param vec1
+   * @param vec2
+   * @return 
+   */
+  public double[] sub(double[] vec1, double[] vec2) {
+    if (vec1.length != vec2.length) {
+      throw new RuntimeException("Cannot subtract vectors of different size");
+    } else {
+      double[] ret = new double[vec1.length];
+      for (int i = 0; i < vec1.length; i++) {
+        ret[i] = vec1[i] - vec2[i];
+      }
+      return ret;
+    }
+  }
+  
+  
+  /**
    * Return a vector that is the element-wise product of the two vectors.
    * 
    * An exception is always thrown if the vectors do not have the same numner of dimensions.
