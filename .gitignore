@@ -13,3 +13,5 @@ junit-noframes.html
 hs_err_*.log
 
 /nbproject/private/
+/build/
+/dist
